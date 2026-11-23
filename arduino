@@ -1,0 +1,61 @@
+#define trigPin 9
+#define echoPin 10
+
+#define redLED 2
+#define yellowLED 3
+#define greenLED 4
+#define buzzer 5
+
+long duration;
+int distance;
+
+void setup() {
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+
+  pinMode(redLED, OUTPUT);
+  pinMode(yellowLED, OUTPUT);
+  pinMode(greenLED, OUTPUT);
+  pinMode(buzzer, OUTPUT);
+
+  Serial.begin(9600);
+}
+
+void loop() {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  duration = pulseIn(echoPin, HIGH);
+  distance = duration * 0.034 / 2;
+
+  Serial.print("Water Distance: ");
+  Serial.println(distance);
+
+  if (distance > 20) {
+    // Underflow - Low water
+    digitalWrite(redLED, HIGH);
+    digitalWrite(yellowLED, LOW);
+    digitalWrite(greenLED, LOW);
+    digitalWrite(buzzer, HIGH);
+  }
+  else if (distance > 10) {
+    // Medium water
+    digitalWrite(redLED, LOW);
+    digitalWrite(yellowLED, HIGH);
+    digitalWrite(greenLED, LOW);
+    digitalWrite(buzzer, LOW);
+  }
+  else {
+    // Overflow - Tank full
+    digitalWrite(redLED, LOW);
+    digitalWrite(yellowLED, LOW);
+    digitalWrite(greenLED, HIGH);
+    digitalWrite(buzzer, HIGH);
+  }
+
+  delay(500);
+}
